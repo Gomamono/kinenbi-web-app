@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今日の記念日</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const today = new Date();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            const dateStr = month + day;
+            const apiUrl = `https://api.whatistoday.cyou/v3/anniv/${dateStr}`;
+            
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const output = document.getElementById("output");
+                    output.innerHTML = "";
+                    
+                    for (let i = 1; i <= 5; i++) {
+                        if (data[`anniv${i}`]) {
+                            const div = document.createElement("div");
+                            div.textContent = data[`anniv${i}`];
+                            output.appendChild(div);
+                        }
+                    }
+                    
+                    if (output.innerHTML === "") {
+                        output.textContent = "記念日が見つかりませんでした。";
+                    }
+                })
+                .catch(error => {
+                    console.error("データ取得エラー:", error);
+                    document.getElementById("output").textContent = "データの取得に失敗しました。";
+                });
+        });
+    </script>
+</head>
+<body>
+    <h1>今日の記念日</h1>
+    <div id="output">読み込み中...</div>
+</body>
+</html>
